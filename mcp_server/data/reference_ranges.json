@@ -1,0 +1,69 @@
+{
+  "CBC": {
+    "hemoglobin": {
+      "name": "Hemoglobin",
+      "range_min": 12.0,
+      "range_max": 17.2,
+      "unit": "g/dL",
+      "description": "Protein in red blood cells that carries oxygen."
+    },
+    "wbc": {
+      "name": "White Blood Cell Count (WBC)",
+      "range_min": 4.5,
+      "range_max": 11.0,
+      "unit": "x10^3 cells/mcL",
+      "description": "Cells that fight infection."
+    },
+    "platelets": {
+      "name": "Platelets",
+      "range_min": 150.0,
+      "range_max": 450.0,
+      "unit": "x10^3 cells/mcL",
+      "description": "Cells that help blood clot."
+    },
+    "rbc": {
+      "name": "Red Blood Cell Count (RBC)",
+      "range_min": 4.2,
+      "range_max": 6.1,
+      "unit": "x10^6 cells/mcL",
+      "description": "Cells that carry oxygen from lungs to body."
+    },
+    "hematocrit": {
+      "name": "Hematocrit",
+      "range_min": 36.0,
+      "range_max": 50.0,
+      "unit": "%",
+      "description": "Percentage of red blood cells in total blood volume."
+    }
+  },
+  "BMP": {
+    "sodium": {
+      "name": "Sodium",
+      "range_min": 135.0,
+      "range_max": 145.0,
+      "unit": "mEq/L",
+      "description": "Electrolyte balancing fluids."
+    },
+    "potassium": {
+      "name": "Potassium",
+      "range_min": 3.5,
+      "range_max": 5.2,
+      "unit": "mEq/L",
+      "description": "Electrolyte controlling nerve and muscle function."
+    },
+    "glucose": {
+      "name": "Glucose (Fasting)",
+      "range_min": 70.0,
+      "range_max": 99.0,
+      "unit": "mg/dL",
+      "description": "Primary source of energy (blood sugar)."
+    },
+    "creatinine": {
+      "name": "Creatinine",
+      "range_min": 0.6,
+      "range_max": 1.2,
+      "unit": "mg/dL",
+      "description": "Waste product filtered by kidneys."
+    }
+  }
+}

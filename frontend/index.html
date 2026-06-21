@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherMed // Multi-Agent Pathology Interpreter</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg-radial"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <div>
+                    <h1>AetherMed</h1>
+                    <span class="subtitle">Multi-Agent Pathology Workspace</span>
+                </div>
+            </div>
+            
+            <div class="status-panel">
+                <div class="status-indicator" id="status-backend">
+                    <span class="status-dot offline"></span>
+                    <span class="status-text">Backend: Checking...</span>
+                </div>
+                <div class="status-indicator" id="status-mcp">
+                    <span class="status-dot offline"></span>
+                    <span class="status-text">MCP Range Server: Checking...</span>
+                </div>
+                <div class="status-indicator" id="status-gemini">
+                    <span class="status-dot offline"></span>
+                    <span class="status-text">Gemini LLM: Checking...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="workspace-grid">
+            
+            <!-- LEFT PANEL: INPUT -->
+            <section class="panel glass-card" id="input-panel">
+                <div class="panel-header">
+                    <i data-lucide="file-text"></i>
+                    <h2>Patient Lab Report</h2>
+                </div>
+                
+                <div class="sample-actions">
+                    <span>Load Preset:</span>
+                    <button class="btn btn-sm btn-outline" id="btn-load-healthy">Normal CBC</button>
+                    <button class="btn btn-sm btn-outline" id="btn-load-anemia">Anemic CBC</button>
+                    <button class="btn btn-sm btn-outline" id="btn-load-diabetes">Diabetic BMP</button>
+                </div>
+
+                <div class="input-container">
+                    <label for="report-input">Paste raw lab results below:</label>
+                    <textarea id="report-input" placeholder="Patient Name: Jane Doe&#10;DOB: 12/04/1988&#10;Phone: (555) 019-2834&#10;&#10;COMPLETE BLOOD COUNT (CBC):&#10;White Blood Cells: 12.4 x10^3 cells/mcL&#10;Hemoglobin: 10.2 g/dL&#10;Platelets: 135 x10^3 cells/mcL"></textarea>
+                </div>
+
+                <div class="security-disclaimer">
+                    <i data-lucide="shield-alert"></i>
+                    <p><strong>Security Feature:</strong> Local PII Redactor is active. All patient identifying details (name, phone, address, DOB) are automatically redacted in browser/server memory before processing.</p>
+                </div>
+
+                <button class="btn btn-primary btn-block" id="btn-analyze">
+                    <i data-lucide="play"></i>
+                    <span>Execute Agent Pipeline</span>
+                </button>
+            </section>
+
+            <!-- CENTER & RIGHT PANEL: TIMELINE & RESULTS -->
+            <div class="results-column">
+                
+                <!-- TIMELINE CONTAINER -->
+                <section class="panel glass-card hidden" id="timeline-panel">
+                    <div class="panel-header">
+                        <i data-lucide="cpu"></i>
+                        <h2>Multi-Agent Pipeline</h2>
+                    </div>
+                    <div class="timeline-container" id="timeline-list">
+                        <!-- Populated dynamically by javascript -->
+                    </div>
+                </section>
+
+                <!-- ANALYSIS RESULTS -->
+                <section class="panel glass-card hidden" id="results-panel">
+                    <!-- Nav Tabs -->
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="tab-scrubbed"><i data-lucide="eye-off"></i> Scrubbed Raw Data</button>
+                        <button class="tab-btn" data-tab="tab-metrics"><i data-lucide="activity"></i> Parameter Checks</button>
+                        <button class="tab-btn" data-tab="tab-explanation"><i data-lucide="message-square"></i> Patient explanation</button>
+                        <button class="tab-btn" data-tab="tab-recommendations"><i data-lucide="users"></i> Consultation Guide</button>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div class="tab-content active" id="tab-scrubbed">
+                        <h3>Secure Output (PII Scrubbed)</h3>
+                        <p class="section-desc">Verify that all private information has been successfully stripped below:</p>
+                        <pre class="redacted-pre" id="redacted-text-display"></pre>
+                    </div>
+
+                    <div class="tab-content" id="tab-metrics">
+                        <h3>Pathology Readings vs. MCP Ranges</h3>
+                        <div class="table-container">
+                            <table class="metrics-table">
+                                <thead>
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Value</th>
+                                        <th>Standard Reference Range</th>
+                                        <th>Status</th>
+                                        <th>Test Info</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metrics-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-explanation">
+                        <div class="markdown-body" id="explanation-display">
+                            <!-- Markdown rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-recommendations">
+                        <div class="markdown-body" id="recommendations-display">
+                            <!-- Markdown rendered dynamically -->
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- WELCOME DISPLAY -->
+                <div class="welcome-card glass-card" id="welcome-panel">
+                    <i data-lucide="heart-handshake" class="welcome-icon"></i>
+                    <h2>Welcome to AetherMed</h2>
+                    <p>Paste medical report text on the left pane and run the agent pipeline. The application will coordinate multiple agents locally using standard clinical datasets loaded from the local MCP Server.</p>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Markdown Parser integration -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
