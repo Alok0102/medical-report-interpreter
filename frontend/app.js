@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // DOM Elements
     const txtReport = document.getElementById("report-input");
     const btnAnalyze = document.getElementById("btn-analyze");
+    const btnUploadFile = document.getElementById("btn-upload-file");
+    const fileUpload = document.getElementById("file-upload");
     const welcomePanel = document.getElementById("welcome-panel");
     const timelinePanel = document.getElementById("timeline-panel");
     const resultsPanel = document.getElementById("results-panel");
@@ -72,6 +74,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Set Initial Preset
     txtReport.value = PRESETS.anemia;
+
+    // --- FILE UPLOAD LOGIC ---
+    btnUploadFile.addEventListener("click", () => {
+        fileUpload.click();
+    });
+
+    fileUpload.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const originalBtnText = btnUploadFile.innerHTML;
+        btnUploadFile.innerHTML = `<i data-lucide="loader" style="width: 14px; height: 14px; margin-right: 4px;"></i> Reading...`;
+        btnUploadFile.disabled = true;
+        txtReport.value = "Extracting text from file, please wait...";
+
+        try {
+            const fileType = file.name.split('.').pop().toLowerCase();
+            
+            if (fileType === 'txt') {
+                const text = await file.text();
+                txtReport.value = text;
+            } 
+            else if (fileType === 'pdf') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                let fullText = "";
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    const strings = content.items.map(item => item.str);
+                    fullText += strings.join(" ") + "\n";
+                }
+                txtReport.value = fullText.trim() || "No text could be extracted from this PDF.";
+            } 
+            else if (['png', 'jpg', 'jpeg'].includes(fileType)) {
+                btnUploadFile.innerHTML = `<i data-lucide="loader" style="width: 14px; height: 14px; margin-right: 4px;"></i> OCR...`;
+                const imageUrl = URL.createObjectURL(file);
+                const result = await Tesseract.recognize(imageUrl, 'eng');
+                txtReport.value = result.data.text.trim() || "No text could be found in this image.";
+                URL.revokeObjectURL(imageUrl);
+            } 
+            else {
+                alert("Unsupported file type.");
+                txtReport.value = "";
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error reading file: " + err.message);
+            txtReport.value = "";
+        } finally {
+            btnUploadFile.innerHTML = originalBtnText;
+            btnUploadFile.disabled = false;
+            lucide.createIcons();
+            fileUpload.value = '';
+        }
+    });
+    // -------------------------
 
     // Tabs control
     document.querySelectorAll(".tab-btn").forEach(btn => {
